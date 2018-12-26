@@ -1,173 +1,211 @@
 #include<stdio.h> 
 #include<malloc.h> 
-
-typedef struct myNode {   //数据结构  
+#include <windows.h>
+typedef struct polynomial {   //数据结构  
     float coef;   //系数coefficient  
-    int expn;    //指数exponent  
-    struct myNode * next;
-}PLOY;
+    int expo;    //指数exponent  
+    struct polynomial * next;
+}Poly;
 
-void start()  //用户选择界面 
-{
-    printf(" \n"); 
-    printf("                     ************************************\n");
-    printf("                     *     欢迎使用一元多项式计算器     *\n");
-    printf("                     ************************************\n");
+void menu() {  //用户菜单选择界面 
+
+    printf(" \n");
+    printf("                  ************************************\n");
+    printf("                  *      欢迎使用一元多项式计算器      *\n");
+    printf("                  ************************************\n");
     printf("\n");
     printf("  请选择操作:\n\n");
     printf("  0.退出操作\n");
     printf("  1.一元多项式相加\n");
     printf("  2.一元多项式相减\n");
-    printf("  3.一元多项式相乘\n\n");
+    printf("  3.一元多项式相乘\n");
+    printf("  PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
 }
-void insert(PLOY *head, PLOY *inpt)
+void insert(Poly *head, Poly *input)//将一个结点按 指数从大到小顺序 插入到一个链表中
 {
-    PLOY *pre, *now;
-    int signal = 0;  pre = head;
-    if (pre->next == NULL) {
-        pre->next = inpt;
-    }
-    else {
-        now = pre->next;
-        while (signal == 0) {
-            if (inpt->expn < now->expn)
-            {
-                if (now->next == NULL)
+    Poly *pre, *now;//记录一个结点和它的下一个结点
+    int signal = 0;//标记是否结束插入的循环
+    pre = head;//先令pre为头链表
 
-                {
-                    now->next = inpt;
-                    signal = 1;
+    if (pre->next == NULL) {//如果只有头链表
+        pre->next = input;//就把input插到头结点的下一个
+    }
+    else {//非空链表
+        now = pre->next;//令now为pre的下一个
+        while (signal == 0) {
+            if (input->expo < now->expo)//如果要插入的链表的指数小于now的,那么
+            {
+                if (now->next == NULL) {//如果now的之后没有结点,就把input插到now后面,也就是链表最后
+                    now->next = input;
+                    signal = 1;//令结束标志成立,从而这次结束退出循环,插入完成
                 }
-                else {
+                else {//如果now后有结点,就把pre和now结点各往后移动一个,然后开始一个新的比较
                     pre = now;
                     now = pre->next;
                 }
             }
-            else if (inpt->expn > now->expn) {
-                inpt->next = now;
-                pre->next = inpt;
-                signal = 1;
+            else if (input->expo > now->expo) {//如果要插入的链表的指数大于now的,那么将input插入到pre和now之间
+                input->next = now;
+                pre->next = input;
+                signal = 1;//令结束标志成立,从而这次结束退出循环,插入完成
             }
-            else {
-                now->coef = now->coef + inpt->coef;
-                signal = 1;
-                free(inpt);      if (now->coef == 0) { pre->next = now->next;      free(now); }
+            else {//如果要插入的链表的指数等于now的,那么将input的系数和now的合并
+                now->coef = now->coef + input->coef;//合并系数
+                signal = 1;//令结束标志成立,从而这次结束退出循环,插入完成
+                free(input);//合并后就可以删除input内存,释放空间
+                if (now->coef == 0) {//如果系数正负相加抵消,就删除now结点
+                    pre->next = now->next;
+                    free(now);
+                }
             }
         }
     }
 }
 
-PLOY *creat(char ch)  //建立多项式 
-{
-    PLOY *head, *inpt;
-    float x;
-    int y;
-    head = (PLOY *)malloc(sizeof(PLOY));
-    head->next = NULL;
-    printf("请输入一元多项式%c:(格式是：系数 指数；以0 0 结束！)\n", ch);
-    scanf("%f %d", &x, &y);
+Poly *creat(char ch) {  //建立多项式 
+    Poly *head, *input;//建立头结点和一个输入结点
+    float x;//暂时存放系数
+    int y;//暂时存放指数
+    int n=1;//存放多项式次数
+    head = (Poly *)malloc(sizeof(Poly));//分配头结点内存
+    head->next = NULL;//初始化next
+    //友好化输入提示 给系数和指数赋值
+    printf("\n%c(x)的第%d项式系数:",ch,n);
+    scanf("%f", &x);//给系数赋值
 
-    while (x != 0) {
-
-        inpt = (PLOY *)malloc(sizeof(PLOY));
-        inpt->coef = x;
-        inpt->expn = y;
-        inpt->next = NULL;
-        insert(head, inpt);
-        printf("请输入一元多项式%c:(以0 0 结束！)\n", ch);
-        scanf("%f %d", &x, &y);
-    }  return head;
+    while (x != 0) {//如果系数不为0(系数为0即代表结束),就不停地增加新结点并赋值后合并入链表
+        //友好化输入提示 给系数和指数赋值
+        printf("%c(x)的第%d项式指数:",ch,n++);
+        scanf("%d", &y);//给指数赋值
+        printf("\n");
+        input = (Poly *)malloc(sizeof(Poly));
+        input->coef = x;
+        input->expo = y;
+        input->next = NULL;
+        insert(head, input);
+        //友好化输入提示 给系数和指数赋值
+        printf("%c(x)的第%d项式系数:",ch,n);
+        scanf("%f", &x);//给系数赋值
+    }
+    return head;//返回链表的头结点
 }
-PLOY *addPLOY(PLOY *head, PLOY *pre)  //多项式相加 
+
+Poly *add(Poly *head, Poly *pre)  //多项式相加 
 {
-    PLOY *inpt;
+    Poly *input;
     int flag = 0;
+    //下面这段原理是将第二个链表中的结点一个个合并到第一个链表中,即为相加
     while (flag == 0) {
         if (pre->next == NULL)
             flag = 1;
         else {
             pre = pre->next;
-            inpt = (PLOY *)malloc(sizeof(PLOY));
-            inpt->coef = pre->coef;
-            inpt->expn = pre->expn;
-            inpt->next = NULL;
-            insert(head, inpt);
+            input = (Poly *)malloc(sizeof(Poly));
+            input->coef = pre->coef;
+            input->expo = pre->expo;
+            input->next = NULL;
+            insert(head, input);
         }
-    }  return head;
+    }
+    return head;//返回第一个链表(合并后的链表)的头结点
 }
-PLOY *minusPLOY(PLOY *head, PLOY *pre)  //多项式相减 
+Poly *minus(Poly *head, Poly *pre)  //多项式相减 
 {
-    PLOY *inpt;
+    Poly *input;
     int flag = 0;
+    //这里和相加类似,只是把每个系数取相反数
     while (flag == 0) {
         if (pre->next == NULL)
             flag = 1;
         else {
             pre = pre->next;
-            inpt = (PLOY *)malloc(sizeof(PLOY));
-            inpt->coef = 0 - pre->coef;
-            inpt->expn = pre->expn;
-            inpt->next = NULL;
-            insert(head, inpt);
+            input = (Poly *)malloc(sizeof(Poly));
+            input->coef = 0 - pre->coef;
+            input->expo = pre->expo;
+            input->next = NULL;
+            insert(head, input);
         }
     }  return head;
 }
-PLOY *byPLOY(PLOY *head1, PLOY *head2)  //多项式相乘 
+
+/**
+ * @pargm *head1 *head2 两个要相乘的一元多项式链表
+ * @return 返回一个相乘结果的一元多项式(乘积)
+ */
+Poly *multiply(Poly *head1, Poly *head2)  //多项式相乘 
 {
-    PLOY *inpt, *res, *pre;
-    int flag = 0;
-    res = (PLOY *)malloc(sizeof(PLOY));
-    res->next = NULL;
-    head1 = head1->next;
+    Poly *input, *product, *pre;
+    int flag = 0;//flag为是否结束 相乘步骤循环 的判断条件
+    product = (Poly *)malloc(sizeof(Poly));//分配乘积 一元多项式 空间
+    product->next = NULL;
+    head1 = head1->next;//现将第一个链表定位到它的第一个值部分
     pre = head2;
+    //相乘原理为:先取第一个链表第一个,然后将第二个链表中的每个和它相乘,将乘积合并入product链表中
+    //然后再取第一个链表第二个,重复前面步骤,直至全部结束.
     while (flag == 0) {
-        if (pre->next == NULL) {
+        if (head1 == NULL) {//如果第一个链表元素取尽,结束
+            flag = 1;
+            continue;
+        }
+        if (pre->next == NULL) {//如果第二个链表元素取尽,第一个链表取下一个,再重乘一遍
             pre = head2;
             head1 = head1->next;
             continue;
-        }   if (head1 == NULL) {
-            flag = 1;    continue;
         }
         pre = pre->next;
-        inpt = (PLOY *)malloc(sizeof(PLOY));
-        inpt->coef = pre->coef*head1->coef;
-        inpt->expn = pre->expn + head1->expn;
-        inpt->next = NULL;   insert(res, inpt);
-    }  return res;
+        input = (Poly *)malloc(sizeof(Poly));//分配新结点存储相乘结果,并用于合并入乘积链表
+        input->coef = pre->coef*head1->coef;//多项式系数为两系数相乘
+        input->expo = pre->expo + head1->expo;//多项式指数为两指数相加
+        input->next = NULL;//初始化next
+        insert(product, input);//合并入乘积链表
+    }
+    return product;//返回乘积
 }
 
-void print(PLOY *fun) {
-    PLOY *printing;  int flag = 0;
+void print(Poly *fun) {//用来输出一元多项式
+    Poly *printing; //创立用于遍历链表的结点
+    int flag = 0;//判定是否继续print的标记
+    float ex0 = 0;//计算常数
 
     printing = fun->next;
-    if (fun->next == NULL) {
+    if (fun->next == NULL) {//如果是空链表,就输出0
         printf("0\n");
         return;
-    }  while (flag == 0) {
-        if (printing->coef > 0 && fun->next != printing)
+    }
+    while (flag == 0) {
+        if (printing->coef > 0 && fun->next != printing)//fun->next != printing用来判断是否为第一个结点
             printf("+");
-        if (printing->coef == 1);
-        else if (printing->coef == -1)
-            printf("-");
-        else   printf("%f", printing->coef);
-        if (printing->expn != 0) printf("x^%d", printing->expn);
-        else if ((printing->coef == 1) || (printing->coef == -1))
-            printf("1");
-        if (printing->next == NULL)
+
+        if (printing->expo != 0) {
+            if (printing->coef == 1);//如果系数是1,就不输出系数
+            else if (printing->coef == -1)
+                printf("-");//如果系数-1,系数就只输出负号
+            else printf("%.3f", printing->coef);//如果不是以上情况,就正常输出系数的值
+            printf("x^%d", printing->expo);//如果指数不为0,输出x^ 然后加上指数的值
+        }
+        else if (printing->expo == 0)//如果指数为0,常数增加
+            ex0 += printing->coef;
+        if (printing->next == NULL) {
+            if (ex0 != 0)
+            {
+                printf("%.3f", ex0);//最后输出常数
+            }
             flag = 1;
-        else   printing = printing->next;
+        }
+        else printing = printing->next;
     }
     printf("\n");
 }
-void main() {
-    PLOY *f, *g;
-    int sign = -1;
-    start();
-    while (sign != 0) {
-        scanf("%d", &sign);
-        switch (sign) {
-        case 0:    break;
-        case 1: {     printf("你选择的操作是多项式相加:\n");
+int main() {
+    Poly *f, *g;//创立了两个结构体指针
+    int sign = -1;//记录选了菜单的第几个
+    menu();//显示开始菜单页面
+    while (sign != 0) {//不是选了退出的话
+        scanf("%d", &sign);//记录菜单选择
+        switch (sign) {//进入选项的对应功能
+        case 0:    break;//0就退出
+        case 1: {
+            printf("开始多项式相加:\n");
             f = creat('f');
             printf("f(x)=");
             print(f);
@@ -177,15 +215,15 @@ void main() {
             printf("--------------------\n\n");
             printf("两个多项式相加结果为：\n\n");
             printf(" F(x)=f(x)+g(x)=");
-            f = addPLOY(f, g);
+            f = add(f, g);
             print(f);
             printf("\n--------------------\n");
             sign = -1;
-            start();
+            menu();
             break;
         }
         case 2: {
-            printf("你选择的操作是多项式相减:\n");
+            printf("开始多项式相减:\n");
             f = creat('f');
             printf("f(x)=");
             print(f);
@@ -195,15 +233,15 @@ void main() {
             printf("--------------------\n\n");
             printf("两个多项式相减结果为：\n\n");
             printf(" F(x)=f(x)-g(x)=");
-            f = minusPLOY(f, g);
+            f = minus(f, g);
             print(f);
             printf("\n--------------------\n");
             sign = -1;
-            start();
+            menu();
             break;
         }
         case 3: {
-            printf("你选择的操作是多项式相乘:\n");
+            printf("开始多项式相乘:\n");
             f = creat('f');
             printf("f(x)=");
             print(f);
@@ -213,24 +251,33 @@ void main() {
             printf("--------------------\n\n");
             printf("两个多项式相乘结果为：\n\n");
             printf(" F(x)=f(x)*g(x)=");
-            f = byPLOY(f, g);
+            f = multiply(f, g);
             print(f);
             printf("\n--------------------\n");
             sign = -1;
-            start();
+            menu();
             break;
         }
         case 4: {
             sign = -1;
-            start();
+            menu();
             break;
         }
         default: {
-            printf("Error!请重新选择操作!\n");
-            start();
-            break;    }
+            printf("无效指令:请重新选择操作!\n");
+            menu();
+            break;
         }
-    }  printf("                           ***********************\n");
-    printf("                           *      谢谢使用！     *\n");
-    printf("                           ***********************\n");
+        }
+    }
+    printf("                         ***********************\n");
+    printf("                         *  即将退出!谢谢使用!  *\n");
+    printf("                         ***********************\n");
+    printf("3s后退出\n");
+    Sleep(1000);
+    printf("2s后退出\n");
+    Sleep(1000);
+    printf("1s后退出\n");
+    Sleep(1000);
+    return 1;
 }
