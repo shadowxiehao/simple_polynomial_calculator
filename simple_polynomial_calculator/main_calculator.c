@@ -10,21 +10,15 @@ typedef struct polynomial {   //数据结构
 
 void menu() {  //用户菜单选择界面 
     printf("\n"
-        "\n"
-        "\n"
-        "\n"
-        "\n"
-        "\n"
-        "\n"
-        "\t\t\t*****************************************************************\n"
-        "\t\t\t********************欢迎使用一元多项式计算器*********************\n"
-        "\t\t\t********                                                 ********\n"
-        "\t\t\t********                 1.一元多项式相加                ********\n"
-        "\t\t\t********                 2.一元多项式相减                ********\n"
-        "\t\t\t********                 3.一元多项式相乘                ********\n"
-        "\t\t\t********                   0.退出计算器                  ********\n"
-        "\t\t\t*****************************************************************\n"
-        "\t\t\t                        您需要执行的是：");
+        "\t*****************************************************************\n"
+        "\t********************        请选择操作       ********************\n"
+        "\t********                 1.给上个x变量赋值,显示计算结果  ********\n"
+        "\t********                 2.一元多项式相加                ********\n"
+        "\t********                 3.一元多项式相减                ********\n"
+        "\t********                 4.一元多项式相乘                ********\n"
+        "\t********                   0.退出计算器                  ********\n"
+        "\t*****************************************************************\n"
+        "\t                        您需要执行的是：");
 }
 void insert(Poly *head, Poly *input)//将一个结点按 指数从大到小顺序 插入到一个链表中
 {
@@ -166,6 +160,22 @@ Poly *multiply(Poly *head1, Poly *head2)  //多项式相乘
     }
     return product;//返回乘积
 }
+double calcu(Poly *head, double x) {
+    Poly *s; //多项式 
+    double sum = 0, n;
+    int i;
+    s = head->next;//头结点下一个 
+    while (1) {
+        n = 1;
+        for (i = 0; i < s->expo; i++)//指数运算 
+            n = n * x;
+        sum += n * s->coef;//叠加 
+        if (s->next == NULL) {
+            return sum;
+        }
+        else s = s->next;
+    }
+}
 
 void print(Poly *fun) {//用来输出一元多项式
     Poly *printing; //创立用于遍历链表的结点
@@ -208,20 +218,46 @@ int main() {
 
     Poly *f, *g;//创立了两个结构体指针
     int sign = -1;//记录选了菜单的第几个
+    int start = 0;//记录是否之前进行过计算
+    char flag = 'N';//判断是否继续操作
+    int flagg = 0;//判断是否继续操作
     system("color f0");
-    menu();//显示开始菜单页面
+    
     while (sign != 0) {//不是选了退出的话
+        menu();//显示开始菜单页面
         scanf("%d", &sign);//记录菜单选择
         switch (sign) {//进入选项的对应功能
         case 0:    break;//0就退出
         case 1: {
+            double val = 0;
+            if (start!=0) {
+                printf("\n请输入上个结果x的值:");
+                scanf("%lf", &val);
+                val = calcu(f, val);
+                printf("\n赋值后上个式子结果是:%lf\n", val);
+            }
+            else {
+                system("cls");
+                printf("\n 错误!没有之前运算结果!请先进行一次运算!\n");
+                Sleep(1500);
+            }
+            break;
+        }
+        case 2: {
             system("cls");
+            
             printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n");
             printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
             printf("开始多项式相加:\n");
-            f = creat('f');
-            printf("f(x)=");
-            print(f);
+            if (flagg == 1) {
+                printf("上个结果f(x)=");
+                print(f);
+            }
+            if (flagg == 0) {
+                f = creat('f');
+                printf("f(x)=");
+                print(f);
+            }
             g = creat('g');
             printf("g(x)=");
             print(g);
@@ -232,17 +268,34 @@ int main() {
             print(f);
             printf("\n--------------------\n");
             sign = -1;
-            menu();
+            start = 1;
+            getchar();
+            printf("\n是否以结果为一个多项式继续操作?(Y/N):");
+            scanf("%c", &flag);
+            if (flag == 'Y' | 'y') {
+                flagg = 1;//标记为继续操作
+            }
+            else if (flag == 'N' | 'n') {
+                flagg = 0;//标记为继续操作
+            }
+            printf("\n已记录您的选择,将在下次操作时生效");
             break;
         }
-        case 2: {
+        case 3: {
             system("cls");
+            
             printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n");
             printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
             printf("开始多项式相减:\n");
-            f = creat('f');
-            printf("f(x)=");
-            print(f);
+            if (flagg == 1) {
+                printf("上个结果f(x)=");
+                print(f);
+            }
+            if (flagg == 0) {
+                f = creat('f');
+                printf("f(x)=");
+                print(f);
+            }
             g = creat('g');
             printf("g(x)=");
             print(g);
@@ -253,17 +306,34 @@ int main() {
             print(f);
             printf("\n--------------------\n");
             sign = -1;
-            menu();
+            start = 1;
+            getchar();
+            printf("\n是否以结果为一个多项式继续操作?(Y/N):");
+            scanf("%c", &flag);
+            if (flag == 'Y' | 'y') {
+                flagg = 1;//标记为继续操作
+            }
+            else if (flag == 'N' | 'n') {
+                flagg = 0;//标记为继续操作
+            }
+            printf("\n已记录您的选择,将在下次操作时生效");
             break;
         }
-        case 3: {
+        case 4: {
             system("cls");
+            
             printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n");
             printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
             printf("开始多项式相乘:\n");
-            f = creat('f');
-            printf("f(x)=");
-            print(f);
+            if (flagg == 1) {
+                printf("上个结果f(x)=");
+                print(f);
+            }
+            if (flagg == 0) {
+                f = creat('f');
+                printf("f(x)=");
+                print(f);
+            }
             g = creat('g');
             printf("g(x)=");
             print(g);
@@ -274,19 +344,30 @@ int main() {
             print(f);
             printf("\n--------------------\n");
             sign = -1;
-            menu();
+            start = 1;
+            getchar();
+            printf("\n是否以结果为一个多项式继续操作?(Y/N):");
+            scanf("%c", &flag);
+            if (flag == 'Y' | 'y') {
+                flagg = 1;//标记为继续操作
+            }
+            else if (flag == 'N' | 'n') {
+                flagg = 0;//标记为继续操作
+            }
+            printf("\n已记录您的选择,将在下次操作时生效");
             break;
         }
         default: {
             printf("无效指令:请重新选择操作!\n");
-            menu();
+            system("cls");
             break;
         }
         }
+        
     }
-    printf("\n                         \t\t\t***********************\n");
-    printf("                         \t\t\t*  即将退出!谢谢使用! *\n");
-    printf("                         \t\t\t***********************\n");
+    printf("\n\t***********************\n");
+    printf("\t*  即将退出!谢谢使用! *\n");
+    printf("\t***********************\n");
     printf("3s后退出\n");
     Sleep(1000);
     printf("2s后退出\n");
