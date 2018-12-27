@@ -48,7 +48,7 @@ void insert(Poly *head, Poly *input)//将一个结点按 指数从大到小顺序 插入到一个链
                 pre->next = input;
                 signal = 1;//令结束标志成立,从而这次结束退出循环,插入完成
             }
-            else {//如果要插入的链表的指数等于now的,那么将input的系数和now的合并
+            else {//如-果要插入的链表的指数等于now的,那么将input的系数和now的合并
                 now->coef = now->coef + input->coef;//合并系数
                 signal = 1;//令结束标志成立,从而这次结束退出循环,插入完成
                 free(input);//合并后就可以删除input内存,释放空间
@@ -63,7 +63,8 @@ void insert(Poly *head, Poly *input)//将一个结点按 指数从大到小顺序 插入到一个链
 
 Poly *creat(char ch) {  //建立多项式 
     Poly *head, *input;//建立头结点和一个输入结点
-    float x;//暂时存放系数
+    float 
+x;//暂时存放系数
     int y;//暂时存放指数
     int n = 1;//存放多项式次数
     head = (Poly *)malloc(sizeof(Poly));//分配头结点内存
@@ -272,10 +273,10 @@ int main() {
             getchar();
             printf("\n是否以结果为一个多项式继续操作?(Y/N):");
             scanf("%c", &flag);
-            if (flag == 'Y' | 'y') {
+            if (flag == ('Y' | 'y')) {
                 flagg = 1;//标记为继续操作
             }
-            else if (flag == 'N' | 'n') {
+            else if (flag == ('N' | 'n')) {
                 flagg = 0;//标记为继续操作
             }
             printf("\n已记录您的选择,将在下次操作时生效");
@@ -310,10 +311,10 @@ int main() {
             getchar();
             printf("\n是否以结果为一个多项式继续操作?(Y/N):");
             scanf("%c", &flag);
-            if (flag == 'Y' | 'y') {
+            if (flag == ('Y' | 'y')) {
                 flagg = 1;//标记为继续操作
             }
-            else if (flag == 'N' | 'n') {
+            else if (flag == ('N' | 'n')) {
                 flagg = 0;//标记为继续操作
             }
             printf("\n已记录您的选择,将在下次操作时生效");
@@ -348,10 +349,10 @@ int main() {
             getchar();
             printf("\n是否以结果为一个多项式继续操作?(Y/N):");
             scanf("%c", &flag);
-            if (flag == 'Y' | 'y') {
+            if (flag == ('Y' | 'y')) {
                 flagg = 1;//标记为继续操作
             }
-            else if (flag == 'N' | 'n') {
+            else if (flag == ('N' | 'n')) {
                 flagg = 0;//标记为继续操作
             }
             printf("\n已记录您的选择,将在下次操作时生效");
