@@ -1,5 +1,6 @@
-#include<stdio.h> 
-#include<malloc.h> 
+#include <stdio.h> 
+#include <stdlib.h>
+#include <malloc.h> 
 #include <windows.h>
 typedef struct polynomial {   //数据结构  
     float coef;   //系数coefficient  
@@ -8,18 +9,22 @@ typedef struct polynomial {   //数据结构
 }Poly;
 
 void menu() {  //用户菜单选择界面 
-
-    printf(" \n");
-    printf("                  ************************************\n");
-    printf("                  *      欢迎使用一元多项式计算器      *\n");
-    printf("                  ************************************\n");
-    printf("\n");
-    printf("  请选择操作:\n\n");
-    printf("  0.退出操作\n");
-    printf("  1.一元多项式相加\n");
-    printf("  2.一元多项式相减\n");
-    printf("  3.一元多项式相乘\n");
-    printf("  PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
+    printf("\n"
+        "\n"
+        "\n"
+        "\n"
+        "\n"
+        "\n"
+        "\n"
+        "\t\t\t*****************************************************************\n"
+        "\t\t\t********************欢迎使用一元多项式计算器*********************\n"
+        "\t\t\t********                                                 ********\n"
+        "\t\t\t********                 1.一元多项式相加                ********\n"
+        "\t\t\t********                 2.一元多项式相减                ********\n"
+        "\t\t\t********                 3.一元多项式相乘                ********\n"
+        "\t\t\t********                   0.退出计算器                  ********\n"
+        "\t\t\t*****************************************************************\n"
+        "\t\t\t                        您需要执行的是：");
 }
 void insert(Poly *head, Poly *input)//将一个结点按 指数从大到小顺序 插入到一个链表中
 {
@@ -66,16 +71,16 @@ Poly *creat(char ch) {  //建立多项式
     Poly *head, *input;//建立头结点和一个输入结点
     float x;//暂时存放系数
     int y;//暂时存放指数
-    int n=1;//存放多项式次数
+    int n = 1;//存放多项式次数
     head = (Poly *)malloc(sizeof(Poly));//分配头结点内存
     head->next = NULL;//初始化next
     //友好化输入提示 给系数和指数赋值
-    printf("\n%c(x)的第%d项式系数:",ch,n);
+    printf("\n%c(x)的第%d项式系数:", ch, n);
     scanf("%f", &x);//给系数赋值
 
     while (x != 0) {//如果系数不为0(系数为0即代表结束),就不停地增加新结点并赋值后合并入链表
         //友好化输入提示 给系数和指数赋值
-        printf("%c(x)的第%d项式指数:",ch,n++);
+        printf("%c(x)的第%d项式指数:", ch, n++);
         scanf("%d", &y);//给指数赋值
         printf("\n");
         input = (Poly *)malloc(sizeof(Poly));
@@ -84,7 +89,7 @@ Poly *creat(char ch) {  //建立多项式
         input->next = NULL;
         insert(head, input);
         //友好化输入提示 给系数和指数赋值
-        printf("%c(x)的第%d项式系数:",ch,n);
+        printf("%c(x)的第%d项式系数:", ch, n);
         scanf("%f", &x);//给系数赋值
     }
     return head;//返回链表的头结点
@@ -173,7 +178,7 @@ void print(Poly *fun) {//用来输出一元多项式
         return;
     }
     while (flag == 0) {
-        if (printing->coef > 0 && fun->next != printing)//fun->next != printing用来判断是否为第一个结点
+        if (printing->coef > 0 && printing->expo != 0 && fun->next != printing)//fun->next != printing用来判断是否为第一个结点
             printf("+");
 
         if (printing->expo != 0) {
@@ -181,14 +186,17 @@ void print(Poly *fun) {//用来输出一元多项式
             else if (printing->coef == -1)
                 printf("-");//如果系数-1,系数就只输出负号
             else printf("%.3f", printing->coef);//如果不是以上情况,就正常输出系数的值
-            printf("x^%d", printing->expo);//如果指数不为0,输出x^ 然后加上指数的值
+            if (printing->expo > 0)
+                printf("x^%d", printing->expo);//如果指数>0,输出x^ 然后加上指数的值
+            else
+                printf("x^%d ", printing->expo);//如果指数<0,输出x^ 然后加上指数的值,再加个空格
         }
         else if (printing->expo == 0)//如果指数为0,常数增加
             ex0 += printing->coef;
         if (printing->next == NULL) {
             if (ex0 != 0)
             {
-                printf("%.3f", ex0);//最后输出常数
+                printf("+%.3f", ex0);//最后输出常数
             }
             flag = 1;
         }
@@ -197,14 +205,19 @@ void print(Poly *fun) {//用来输出一元多项式
     printf("\n");
 }
 int main() {
+
     Poly *f, *g;//创立了两个结构体指针
     int sign = -1;//记录选了菜单的第几个
+    system("color f0");
     menu();//显示开始菜单页面
     while (sign != 0) {//不是选了退出的话
         scanf("%d", &sign);//记录菜单选择
         switch (sign) {//进入选项的对应功能
         case 0:    break;//0就退出
         case 1: {
+            system("cls");
+            printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n");
+            printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
             printf("开始多项式相加:\n");
             f = creat('f');
             printf("f(x)=");
@@ -223,6 +236,9 @@ int main() {
             break;
         }
         case 2: {
+            system("cls");
+            printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n");
+            printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
             printf("开始多项式相减:\n");
             f = creat('f');
             printf("f(x)=");
@@ -241,6 +257,9 @@ int main() {
             break;
         }
         case 3: {
+            system("cls");
+            printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n");
+            printf("PS:输入格式:系数 指数；当输入系数为0时结束！\n\n");
             printf("开始多项式相乘:\n");
             f = creat('f');
             printf("f(x)=");
@@ -258,11 +277,6 @@ int main() {
             menu();
             break;
         }
-        case 4: {
-            sign = -1;
-            menu();
-            break;
-        }
         default: {
             printf("无效指令:请重新选择操作!\n");
             menu();
@@ -270,9 +284,9 @@ int main() {
         }
         }
     }
-    printf("                         ***********************\n");
-    printf("                         *  即将退出!谢谢使用!  *\n");
-    printf("                         ***********************\n");
+    printf("\n                         \t\t\t***********************\n");
+    printf("                         \t\t\t*  即将退出!谢谢使用! *\n");
+    printf("                         \t\t\t***********************\n");
     printf("3s后退出\n");
     Sleep(1000);
     printf("2s后退出\n");
